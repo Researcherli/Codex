@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Snake</title>
+    <link rel="stylesheet" href="./src/styles.css">
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="game-card" aria-labelledby="game-title">
+        <header class="game-header">
+          <div>
+            <p class="eyebrow">Arcade Lab</p>
+            <h1 id="game-title">Snake After Dark</h1>
+            <p class="intro">Navigate the fog, chain combos, and survive portals, poison, and shifting maps.</p>
+          </div>
+          <div class="status-grid" aria-live="polite">
+            <article class="status-item">
+              <span class="status-label">Score</span>
+              <strong id="score" class="status-value">0</strong>
+            </article>
+            <article class="status-item">
+              <span class="status-label">Best</span>
+              <strong id="best-score" class="status-value">0</strong>
+            </article>
+            <article class="status-item">
+              <span class="status-label">Combo</span>
+              <strong id="combo-count" class="status-value">x1</strong>
+            </article>
+            <article class="status-item">
+              <span class="status-label">Status</span>
+              <strong id="status" class="status-value">Running</strong>
+            </article>
+          </div>
+        </header>
+
+        <section class="board-panel" aria-label="Game board">
+          <div id="board-scene" class="board-scene">
+            <div id="board" class="board" role="grid" aria-label="Snake grid"></div>
+            <div id="snake-layer" class="snake-layer" aria-hidden="true"></div>
+            <div id="fx-layer" class="fx-layer" aria-hidden="true"></div>
+            <div id="combo-banner" class="combo-banner" hidden></div>
+            <div id="overlay" class="overlay" hidden>
+              <p id="overlay-title" class="overlay-title">Paused</p>
+              <p id="overlay-subtitle" class="overlay-subtitle">Press Resume to continue.</p>
+            </div>
+          </div>
+        </section>
+
+        <footer class="footer-panel">
+          <div class="button-row">
+            <button id="pause-button" class="button button-secondary" type="button">Pause</button>
+            <button id="restart-button" class="button" type="button">Restart</button>
+          </div>
+          <p class="hint">Use Arrow keys or WASD to steer. Hold Shift to dash. Press Space or P to pause.</p>
+        </footer>
+
+        <section class="touch-panel" aria-label="Touch controls">
+          <button class="touch-button touch-button-up" data-direction="up" type="button" aria-label="Move up">&uarr;</button>
+          <button class="touch-button touch-button-left" data-direction="left" type="button" aria-label="Move left">&larr;</button>
+          <button class="touch-button touch-button-right" data-direction="right" type="button" aria-label="Move right">&rarr;</button>
+          <button class="touch-button touch-button-down" data-direction="down" type="button" aria-label="Move down">&darr;</button>
+        </section>
+      </section>
+    </main>
+
+    <script type="module" src="./src/main.js"></script>
+  </body>
+</html>
