@@ -223,7 +223,7 @@ function renderSnake() {
   const headPosition = getCellPixelPosition(state.snake[0], metrics);
   boardSceneElement.style.setProperty("--fog-x", `${headPosition.x + headPosition.width / 2}px`);
   boardSceneElement.style.setProperty("--fog-y", `${headPosition.y + headPosition.height / 2}px`);
-  boardSceneElement.style.setProperty("--fog-radius", `${Math.max(headPosition.width * 5.5, 180)}px`);
+  boardSceneElement.style.setProperty("--fog-radius", `${Math.max(headPosition.width * 8, 260)}px`);
 }
 
 function renderStatus() {

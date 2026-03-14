@@ -1,5 +1,5 @@
-export const BOARD_COLUMNS = 20;
-export const BOARD_ROWS = 20;
+export const BOARD_COLUMNS = 24;
+export const BOARD_ROWS = 24;
 export const TICK_MS = 150;
 export const MIN_TICK_MS = 65;
 export const INPUT_BUFFER_LIMIT = 3;
@@ -7,8 +7,10 @@ export const MIN_SNAKE_LENGTH = 3;
 export const COMBO_WINDOW_TICKS = 8;
 export const SUPER_FOOD_LIFETIME = 30;
 export const POISON_LIFETIME = 26;
-export const SUPER_FOOD_CHANCE = 0.15;
-export const POISON_CHANCE = 0.1;
+export const SUPER_FOOD_CHANCE = 0.05;
+export const POISON_CHANCE = 0.035;
+export const SPECIAL_SPAWN_INTERVAL = 6;
+export const WORMHOLE_PAIR_CHANCE = 0.28;
 export const DASH_DRAIN_TICKS = 4;
 export const DASH_SCORE_DRAIN = 1;
 
@@ -90,14 +92,14 @@ function createCrossObstacles(columns, rows) {
   const centerX = Math.floor(columns / 2);
   const centerY = Math.floor(rows / 2);
 
-  for (let y = 2; y < rows - 2; y += 1) {
-    if (Math.abs(y - centerY) > 2) {
+  for (let y = 4; y < rows - 4; y += 2) {
+    if (Math.abs(y - centerY) > 3) {
       positions.push({ x: centerX, y });
     }
   }
 
-  for (let x = 2; x < columns - 2; x += 1) {
-    if (Math.abs(x - centerX) > 2) {
+  for (let x = 4; x < columns - 4; x += 2) {
+    if (Math.abs(x - centerX) > 3) {
       positions.push({ x, y: centerY });
     }
   }
@@ -107,22 +109,22 @@ function createCrossObstacles(columns, rows) {
 
 function createRingObstacles(columns, rows) {
   const positions = [];
-  const left = 4;
-  const right = columns - 5;
-  const top = 4;
-  const bottom = rows - 5;
+  const left = 6;
+  const right = columns - 7;
+  const top = 6;
+  const bottom = rows - 7;
   const gapX = Math.floor(columns / 2);
   const gapY = Math.floor(rows / 2);
 
-  for (let x = left; x <= right; x += 1) {
-    if (Math.abs(x - gapX) > 1) {
+  for (let x = left; x <= right; x += 2) {
+    if (Math.abs(x - gapX) > 2) {
       positions.push({ x, y: top });
       positions.push({ x, y: bottom });
     }
   }
 
-  for (let y = top + 1; y < bottom; y += 1) {
-    if (Math.abs(y - gapY) > 1) {
+  for (let y = top + 2; y < bottom; y += 2) {
+    if (Math.abs(y - gapY) > 2) {
       positions.push({ x: left, y });
       positions.push({ x: right, y });
     }
@@ -276,6 +278,10 @@ function findEntityByKind(entities, kind) {
 }
 
 function createWormholes({ columns, rows, snake, obstacles }, random) {
+  if (random() >= WORMHOLE_PAIR_CHANCE) {
+    return [];
+  }
+
   const blocked = createBlockedSet({ snake, obstacles });
   const first = pickFreeCell(columns, rows, blocked, random);
 
@@ -333,31 +339,9 @@ function createInitialEntities(stateLike, random, nextEntityId) {
     entityId = createdFood.nextEntityId;
   }
 
-  const superSpawn = spawnEntityIfNeeded(
-    ENTITY_TYPES.SUPER_FOOD,
-    SUPER_FOOD_LIFETIME,
-    SUPER_FOOD_CHANCE,
-    stateLike,
-    entities,
-    entityId,
-    random
-  );
-  entities = superSpawn.entities;
-  entityId = superSpawn.nextEntityId;
-
-  const poisonSpawn = spawnEntityIfNeeded(
-    ENTITY_TYPES.POISON,
-    POISON_LIFETIME,
-    POISON_CHANCE,
-    stateLike,
-    entities,
-    entityId,
-    random
-  );
-
   return {
-    entities: poisonSpawn.entities,
-    nextEntityId: poisonSpawn.nextEntityId
+    entities,
+    nextEntityId: entityId
   };
 }
 
@@ -737,6 +721,9 @@ export function advanceState(state, random = Math.random) {
     obstacles: state.obstacles,
     wormholes: state.wormholes
   };
+  const shouldRollSpecialSpawn =
+    consumedEntity != null ||
+    (state.tick + 1) % SPECIAL_SPAWN_INTERVAL === 0;
 
   if (!findEntityByKind(entities, ENTITY_TYPES.FOOD)) {
     const blocked = createBlockedSet({
@@ -754,29 +741,31 @@ export function advanceState(state, random = Math.random) {
     }
   }
 
-  const superSpawn = spawnEntityIfNeeded(
-    ENTITY_TYPES.SUPER_FOOD,
-    SUPER_FOOD_LIFETIME,
-    SUPER_FOOD_CHANCE,
-    nextStateLike,
-    entities,
-    nextEntityId,
-    random
-  );
-  entities = superSpawn.entities;
-  nextEntityId = superSpawn.nextEntityId;
+  if (shouldRollSpecialSpawn) {
+    const superSpawn = spawnEntityIfNeeded(
+      ENTITY_TYPES.SUPER_FOOD,
+      SUPER_FOOD_LIFETIME,
+      SUPER_FOOD_CHANCE,
+      nextStateLike,
+      entities,
+      nextEntityId,
+      random
+    );
+    entities = superSpawn.entities;
+    nextEntityId = superSpawn.nextEntityId;
 
-  const poisonSpawn = spawnEntityIfNeeded(
-    ENTITY_TYPES.POISON,
-    POISON_LIFETIME,
-    POISON_CHANCE,
-    nextStateLike,
-    entities,
-    nextEntityId,
-    random
-  );
-  entities = poisonSpawn.entities;
-  nextEntityId = poisonSpawn.nextEntityId;
+    const poisonSpawn = spawnEntityIfNeeded(
+      ENTITY_TYPES.POISON,
+      POISON_LIFETIME,
+      POISON_CHANCE,
+      nextStateLike,
+      entities,
+      nextEntityId,
+      random
+    );
+    entities = poisonSpawn.entities;
+    nextEntityId = poisonSpawn.nextEntityId;
+  }
 
   return {
     ...state,

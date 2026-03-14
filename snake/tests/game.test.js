@@ -50,6 +50,16 @@ test("obstacles from map presets never overlap the default snake", () => {
   }
 });
 
+test("wormholes do not spawn when the roll misses", () => {
+  const state = createInitialState({
+    columns: 12,
+    rows: 12,
+    obstacles: []
+  }, () => 0.99);
+
+  assert.equal(state.wormholes.length, 0);
+});
+
 test("wormholes teleport the snake head to the linked exit", () => {
   const state = createInitialState({
     columns: 8,
@@ -109,6 +119,22 @@ test("super food increases score, starts combo, and leaves pending growth", () =
   assert.equal(nextState.comboCount, 1);
   assert.equal(nextState.comboWindow, COMBO_WINDOW_TICKS);
   assert.equal(nextState.pendingGrowth, 1);
+});
+
+test("special fruit does not roll on every single tick", () => {
+  const state = createInitialState({
+    columns: 10,
+    rows: 10,
+    obstacles: [],
+    wormholes: [],
+    tick: 1,
+    entities: [{ id: "food-1", kind: ENTITY_TYPES.FOOD, position: { x: 0, y: 0 }, ttl: null }]
+  });
+
+  const nextState = advanceState(state, () => 0);
+
+  assert.equal(nextState.entities.some((entity) => entity.kind === ENTITY_TYPES.SUPER_FOOD), false);
+  assert.equal(nextState.entities.some((entity) => entity.kind === ENTITY_TYPES.POISON), false);
 });
 
 test("combo chains add bonus score on consecutive food pickups", () => {

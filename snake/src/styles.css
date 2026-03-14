@@ -58,7 +58,7 @@ button {
 }
 
 .game-card {
-  width: min(100%, 860px);
+  width: min(100%, 980px);
   display: grid;
   gap: 20px;
   padding: 28px;
@@ -111,7 +111,7 @@ h1 {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(116px, 1fr));
   gap: 12px;
-  min-width: min(100%, 520px);
+  min-width: min(100%, 560px);
 }
 
 .status-item {
@@ -142,9 +142,9 @@ h1 {
 .board-scene {
   --fog-x: 50%;
   --fog-y: 50%;
-  --fog-radius: 180px;
+  --fog-radius: 260px;
   position: relative;
-  width: min(100%, 680px);
+  width: min(100%, 820px);
   aspect-ratio: 1;
   margin: 0 auto;
 }
@@ -159,8 +159,8 @@ h1 {
     radial-gradient(
       circle var(--fog-radius) at var(--fog-x) var(--fog-y),
       rgba(255, 255, 255, 0.02) 0,
-      rgba(255, 255, 255, 0.02) 34%,
-      rgba(5, 8, 6, 0.18) 52%,
+      rgba(255, 255, 255, 0.02) 42%,
+      rgba(5, 8, 6, 0.18) 60%,
       rgba(5, 8, 6, 0.92) 100%
     );
   pointer-events: none;
